@@ -1,1 +1,1 @@
-# ohlc-strategy
+# Nifty prediction strategy
