@@ -1,0 +1,53 @@
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
+
+# Load the data (replace 'NIFTY 50.csv' with your actual file)
+df = pd.read_csv("15000.csv")
+df = df[["Open", "High", "Low", "Close"]]
+
+# Prepare the data
+# Shift the 'Close' column to create the target variable (next day's close)
+df['Next Close'] = df['Close'].shift(-1)
+df.dropna(inplace=True)  # Remove the last row (which will have NaN for 'Next Close')
+
+# Features (Open, High, Low)
+X = df[['Open', 'High', 'Low', 'Close']]
+# Target (Next Close)
+y = df['Next Close']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=2)
+
+# Create and train the Linear Regression model
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Make predictions on the test set
+y_pred = model.predict(X_test)
+import matplotlib.pyplot as plt
+plt.scatter(y_test, y_pred)
+plt.xlabel("Actual Values")
+plt.ylabel("Predicted Values")
+plt.title("Actual vs. Predicted Values")
+plt.show()
+
+# Evaluate the model
+print("R-squared:", r2_score(y_test, y_pred))
+print("Mean Squared Error:", mean_squared_error(y_test, y_pred))
+print("Mean Absolute Error:", mean_absolute_error(y_test, y_pred))
+
+# Function to predict next day's close based on input
+def predict_next_close(open_price, high_price, low_price):
+    input_data = [[open_price, high_price, low_price]]
+    predicted_close = model.predict(input_data)[0]
+    return predicted_close
+
+# Example usage (replace with your desired input values)
+open_input = float(input("Enter opening price: "))
+high_input = float(input("Enter high price: "))
+low_input = float(input("Enter low price: "))
+
+predicted_close = predict_next_close(open_input, high_input, low_input)
+print("Predicted next day's close:", predicted_close)
