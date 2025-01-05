@@ -1,1 +1,1 @@
-# Nifty prediction strategy
+# Intraday-Stochastic-trading-system
